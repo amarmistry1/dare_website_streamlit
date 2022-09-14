@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Import libraries
+# # Annual emissions broken down by sector
+# 
+# Here we can present the visualisations and discuss them. 
+# 
+# This page can be easily printed to a pdf using the buttons on the top right hand side of this web page.
+# 
+# This page is just a markdown file that has been slightly adapted to look nicer in Jupyter Books - e.g. removing the cell inputs/ outputs to only show the interactive graph below.
 
 # In[1]:
 
@@ -13,8 +19,6 @@ import base64
 import numpy as np
 from dare_viz import path
 
-
-# Read in Inventory CH4 data
 
 # In[2]:
 
@@ -45,8 +49,6 @@ dfCH4_CO2_equ = dfCH4 / 1000 * 28
 #dfCH4_CO2_equ
 
 
-# Read in Inventory N2O data
-
 # In[4]:
 
 
@@ -75,8 +77,6 @@ dfN2O.drop(
 dfN2O_CO2_equ = dfN2O / 1000 * 265
 #dfN2O_CO2_equ
 
-
-# Read in Inventory F-gas data
 
 # In[6]:
 
@@ -167,14 +167,14 @@ hfc23.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *12690# + (hfc32.
 
 
 test_ODS = (hfc23.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *14800) + (hfc32.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *675) + (hfc4310mee.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1640) + (hfc125.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *3500) + (hfc134a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1430) + (hfc143a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *4470) + (hfc152a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *124) + (hfc227ea.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *3220) + (hfc245fa.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1030) + (hfc365mfc.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *794)
-test_ODS
+#test_ODS
 
 df_test = pd.DataFrame(test_ODS)
 df_test.set_index(pd.to_datetime(df_test.index, format='%Y'), inplace=True)
 
 df_test["ODS"] = df_test["F.  Product uses as substitutes for ODS(2)"] / 1000
 df_test["Total"] = invent_fgas_1["Total"]
-df_test
+#df_test
 
 
 # In[11]:
@@ -195,8 +195,6 @@ df_test
 #fgas_fraction = test2["ODS"] / test2["Total"]
 #fgas_fraction
 
-
-# Read in InTEM data
 
 # In[13]:
 
@@ -261,10 +259,8 @@ df_fgas["InTEM_std"] = np.sqrt(uncert.values)
 
 df_fgas["InTEM_ODS"] = (df_test["ODS"] / df_test["Total"]) * df_fgas["InTEM"]
 df_fgas["InTEM_ODS_std"] = (df_test["ODS"] / df_test["Total"]) * df_fgas["InTEM_std"]
-df_fgas
+#df_fgas
 
-
-# Break down InTEM emissions data by sector (CH4)
 
 # In[17]:
 
@@ -314,8 +310,6 @@ df_ch4_new["InTEM_Waste_std"] = df_ch4_new["InTEM_std"] *df_ch4_new["Waste_Fract
 #df_ch4_new
 
 
-# Break down InTEM emissions data by sector (N2O)
-
 # In[19]:
 
 
@@ -364,8 +358,6 @@ df_n2o_new["InTEM_Waste_std"] = df_n2o_new["InTEM_std"] *df_n2o_new["Waste_Fract
 #df_n2o_new
 
 
-# Sum of CH4 and N2O
-
 # In[21]:
 
 
@@ -404,8 +396,6 @@ waste_both_intem["InTEM_Waste_std"] = df_n2o_new["InTEM_Waste_std"] + df_ch4_new
 waste_both_intem.index = pd.to_datetime(waste_both_intem.index, format='%Y')
 #waste_both_intem
 
-
-# Plot the graph
 
 # In[23]:
 
