@@ -38,7 +38,7 @@ dfCH4.drop(
 #dfCH4
 
 
-# In[3]:
+# In[5]:
 
 
 dfCH4_CO2_equ = dfCH4 / 1000 * 28
@@ -47,7 +47,7 @@ dfCH4_CO2_equ = dfCH4 / 1000 * 28
 
 # Read in Inventory N2O data
 
-# In[4]:
+# In[6]:
 
 
 xlsN2O = pd.ExcelFile('GBR_2022_2020_10052022_142545.xlsx')
@@ -69,7 +69,7 @@ dfN2O.drop(
 #dfN2O
 
 
-# In[5]:
+# In[7]:
 
 
 dfN2O_CO2_equ = dfN2O / 1000 * 265
@@ -78,7 +78,7 @@ dfN2O_CO2_equ = dfN2O / 1000 * 265
 
 # Read in Inventory F-gas data
 
-# In[6]:
+# In[8]:
 
 
 invent_fgas = pd.read_csv(r'C:\Users\amar1\UNFCCC_data_local\2022\processed_data\totals_co2\UK_NIR_2022_co2e_all_gases_yearly.csv')

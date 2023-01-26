@@ -2,7 +2,7 @@
 # Learn more at https://jupyterbook.org/customize/toc.html
 
 format: jb-book
-root: intro
+root: Main_Page1
 chapters:
-- file: Mac_Emissions_by_sector
+- file: Methodology
 

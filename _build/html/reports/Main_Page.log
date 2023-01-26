@@ -1,0 +1,66 @@
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.9/site-packages/jupyter_cache/executors/utils.py", line 51, in single_nb_execution
+    executenb(
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 1204, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "/opt/anaconda3/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 663, in async_execute
+    await self.async_execute_cell(
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 965, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 862, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+years = ["2012", "2013", "2014", "2015"]
+
+for name, in zip(years):
+    
+    a = read_invent_ch4(name, "natural")
+    b = read_invent_ch4(name, "total")
+    
+    fract = a.flux / b.flux
+    test = fract.reindex_like(Intem2012, method='nearest', tolerance=0.01)
+    
+    if name == "2012":
+        tLULUCF12 = test * intem_by_year(0)
+        tLU12 = tLULUCF12.sum()
+    if name == "2013":
+        tLULUCF13 = test * intem_by_year(1)
+        tLU13 = tLULUCF13.sum()
+    if name == "2014":
+        tLULUCF14 = test * intem_by_year(2)
+        tLU14 = tLULUCF14.sum()
+    if name == "2015":
+        tLULUCF15 = test * intem_by_year(3)
+        tLU15 = tLULUCF15.sum()
+    
+tLULUCF = xr.concat((tLU12, tLU13, tLU14, tLU15), dim="time")
+tLULUCF = tLULUCF * 16 * 31536000 * 28 / 1000000000000
+tLULUCF = tLULUCF.to_pandas()
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mIndexError[0m                                Traceback (most recent call last)
+Input [0;32mIn [25][0m, in [0;36m<cell line: 3>[0;34m()[0m
+[1;32m      1[0m years [38;5;241m=[39m [[38;5;124m"[39m[38;5;124m2012[39m[38;5;124m"[39m, [38;5;124m"[39m[38;5;124m2013[39m[38;5;124m"[39m, [38;5;124m"[39m[38;5;124m2014[39m[38;5;124m"[39m, [38;5;124m"[39m[38;5;124m2015[39m[38;5;124m"[39m]
+[1;32m      3[0m [38;5;28;01mfor[39;00m name, [38;5;129;01min[39;00m [38;5;28mzip[39m(years):
+[0;32m----> 5[0m     a [38;5;241m=[39m [43mread_invent_ch4[49m[43m([49m[43mname[49m[43m,[49m[43m [49m[38;5;124;43m"[39;49m[38;5;124;43mnatural[39;49m[38;5;124;43m"[39;49m[43m)[49m
+[1;32m      6[0m     b [38;5;241m=[39m read_invent_ch4(name, [38;5;124m"[39m[38;5;124mtotal[39m[38;5;124m"[39m)
+[1;32m      8[0m     fract [38;5;241m=[39m a[38;5;241m.[39mflux [38;5;241m/[39m b[38;5;241m.[39mflux
+
+Input [0;32mIn [14][0m, in [0;36mread_invent_ch4[0;34m(year, species)[0m
+[1;32m      8[0m [38;5;28;01mimport[39;00m [38;5;21;01mxarray[39;00m [38;5;28;01mas[39;00m [38;5;21;01mxr[39;00m
+[1;32m     10[0m csv [38;5;241m=[39m glob[38;5;241m.[39mglob([38;5;124mf[39m[38;5;124m"[39m[38;5;124mdata/ch4-edgarv7-ukghg-yearly/ch4-edgarv7-ukghg-europe-[39m[38;5;132;01m{[39;00myear[38;5;132;01m}[39;00m[38;5;124m/ch4-edgarv7-ukghg-[39m[38;5;132;01m{[39;00mspecies[38;5;132;01m}[39;00m[38;5;124m_EUROPE_[39m[38;5;132;01m{[39;00myear[38;5;132;01m}[39;00m[38;5;124m.nc[39m[38;5;124m"[39m)
+[0;32m---> 12[0m flux [38;5;241m=[39m xr[38;5;241m.[39mopen_dataset([43mcsv[49m[43m[[49m[38;5;241;43m0[39;49m[43m][49m)
+[1;32m     14[0m min_lon [38;5;241m=[39m [38;5;241m-[39m[38;5;241m12[39m
+[1;32m     15[0m min_lat [38;5;241m=[39m [38;5;241m50[39m
+
+[0;31mIndexError[0m: list index out of range
+IndexError: list index out of range
+

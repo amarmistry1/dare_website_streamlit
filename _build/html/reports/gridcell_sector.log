@@ -1,0 +1,45 @@
+Traceback (most recent call last):
+  File "/opt/anaconda3/lib/python3.9/site-packages/jupyter_cache/executors/utils.py", line 51, in single_nb_execution
+    executenb(
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 1204, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/util.py", line 84, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/util.py", line 62, in just_run
+    return loop.run_until_complete(coro)
+  File "/opt/anaconda3/lib/python3.9/asyncio/base_events.py", line 642, in run_until_complete
+    return future.result()
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 663, in async_execute
+    await self.async_execute_cell(
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 965, in async_execute_cell
+    await self._check_raise_for_error(cell, cell_index, exec_reply)
+  File "/opt/anaconda3/lib/python3.9/site-packages/nbclient/client.py", line 862, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+fig = px.imshow(Intem_agri2012*ag_fraction12, origin='lower')
+fig.update_layout(margin={"r":55,"t":10,"l":10,"b":40}, 
+    autosize = True,
+    template = "simple_white",
+    width=1000, height=700,
+    yaxis_title = "Latitude",
+    xaxis_title = "Longitude",
+    showlegend=False)
+fig.show()
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mNameError[0m                                 Traceback (most recent call last)
+Input [0;32mIn [28][0m, in [0;36m<cell line: 1>[0;34m()[0m
+[0;32m----> 1[0m fig [38;5;241m=[39m px[38;5;241m.[39mimshow([43mIntem_agri2012[49m[38;5;241m*[39mag_fraction12, origin[38;5;241m=[39m[38;5;124m'[39m[38;5;124mlower[39m[38;5;124m'[39m)
+[1;32m      2[0m fig[38;5;241m.[39mupdate_layout(margin[38;5;241m=[39m{[38;5;124m"[39m[38;5;124mr[39m[38;5;124m"[39m:[38;5;241m55[39m,[38;5;124m"[39m[38;5;124mt[39m[38;5;124m"[39m:[38;5;241m10[39m,[38;5;124m"[39m[38;5;124ml[39m[38;5;124m"[39m:[38;5;241m10[39m,[38;5;124m"[39m[38;5;124mb[39m[38;5;124m"[39m:[38;5;241m40[39m}, 
+[1;32m      3[0m     autosize [38;5;241m=[39m [38;5;28;01mTrue[39;00m,
+[1;32m      4[0m     template [38;5;241m=[39m [38;5;124m"[39m[38;5;124msimple_white[39m[38;5;124m"[39m,
+[0;32m   (...)[0m
+[1;32m      7[0m     xaxis_title [38;5;241m=[39m [38;5;124m"[39m[38;5;124mLongitude[39m[38;5;124m"[39m,
+[1;32m      8[0m     showlegend[38;5;241m=[39m[38;5;28;01mFalse[39;00m)
+[1;32m      9[0m fig[38;5;241m.[39mshow()
+
+[0;31mNameError[0m: name 'Intem_agri2012' is not defined
+NameError: name 'Intem_agri2012' is not defined
+

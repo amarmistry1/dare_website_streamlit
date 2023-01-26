@@ -17,186 +17,53 @@ from itertools import takewhile
 import plotly.graph_objects as go
 import base64
 import numpy as np
-from dare_viz import path
+import glob
+
+from fig_mods.getdata import load_ch4
+from fig_mods.getdata import load_n2o
+from fig_mods.getdata import load_fgas
+
+from fig_mods import path
+from fig_mods.nextstep import read_invent_ODS
+from fig_mods.nextstep import read_invent
 
 
 # In[2]:
 
 
-xlsCH4 = pd.ExcelFile('GBR_2022_2020_10052022_142545.xlsx')
-dfCH4 = pd.read_excel(xlsCH4, 'Table10s3', header=4)
-dfCH4.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-dfCH4.dropna(inplace=True)
-
-dfCH4.drop(
-    labels = ["D.  Non-energy products from fuels and solvent use", "G.  Other product manufacture and use ", "C.  Rice cultivation", "D.  Agricultural soils", "E.  Prescribed burning of savannas", "F.  Other land", "E.  Other ","6.  Other (as specified in summary 1.A)", "International bunkers", "Navigation", "Multilateral operations",
- "Aviation"],
-    axis=0,
-    inplace = True
-)
-dfCH4.drop(
-    labels = ["Base year(1)", "Change from base to latest reported year"],
-    axis=1,
-    inplace = True
-)
-#dfCH4
+dfCH4 = load_ch4()
+dfN2O = load_n2o()
+dfODS = load_fgas()
 
 
 # In[3]:
 
 
-dfCH4_CO2_equ = dfCH4 / 1000 * 28
-#dfCH4_CO2_equ
+dfch4_new = (read_invent("GBR", "2022", "Table10s4"))
 
 
 # In[4]:
 
 
-xlsN2O = pd.ExcelFile('GBR_2022_2020_10052022_142545.xlsx')
-dfN2O = pd.read_excel(xlsN2O, 'Table10s4', header=4)
-dfN2O.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-dfN2O.dropna(inplace=True)
-
-dfN2O.drop(
-    labels = ["D.  Non-energy products from fuels and solvent use",  "E.  Prescribed burning of savannas", "F.  Other land", "E.  Other ","6.  Other (as specified in summary 1.A)", "International bunkers", "Navigation", "Multilateral operations",
- "Aviation", "Indirect N2O", "H.  Other "],
-    axis=0,
-    inplace = True
-)
-dfN2O.drop(
-    labels = ["Base year(1)", "Change from base to latest reported year"],
-    axis=1,
-    inplace = True
-)
-#dfN2O
+fgas1 = [f"{hfc}" for hfc in ["23", "32", "125", "134a", "143a", "152a", "227ea", "245fa", "365mfc", "4310mee"]] +     [f"pfc{pfc}" for pfc in ["14", "116", "218", "318"]] +     ["sf6"]
 
 
 # In[5]:
 
 
-dfN2O_CO2_equ = dfN2O / 1000 * 265
-#dfN2O_CO2_equ
+dftest = read_invent_ODS("2022", fgas1[0])
 
 
-# In[6]:
+# In[30]:
 
 
-invent_fgas = pd.read_csv('UK_NIR_2022_co2e_all_gases_yearly.csv')
-invent_fgas.set_index("year", inplace=True)
-#invent_fgas
+dftest = read_invent_ODS("2022", "HFC-23") + read_invent_ODS("2022", "HFC-32")
+dftest
 
 
-# In[7]:
-
-
-invent_fgas_1 = invent_fgas / 1000
-invent_fgas_1["Total"] = invent_fgas_1.sum(axis=1)
-invent_fgas_1.index = pd.to_datetime(invent_fgas_1.index, format='%Y')
-#invent_fgas_1
-
-
-# In[8]:
-
-
-hfc23 = pd.read_csv('UK_NIR_2022_HFC-23.csv')
-hfc23.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-hfc23.fillna(0, inplace=True)
-#hfc23
-
-hfc32 = pd.read_csv('UK_NIR_2022_HFC-32.csv')
-hfc32.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-hfc32.fillna(0, inplace=True)
-#hfc32
-
-hfc4310mee = pd.read_csv('UK_NIR_2022_HFC-43-10mee.csv')
-hfc4310mee.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-hfc4310mee.replace("NA,NO", 0, inplace=True)
-#hfc4310mee.fillna(0, inplace=True)
-#hfc4310mee
-
-hfc125 = pd.read_csv('UK_NIR_2022_HFC-125.csv')
-hfc125.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-#hfc125.replace("NA,NO", 0, inplace=True)
-hfc125.fillna(0, inplace=True)
-#hfc125
-
-hfc134a = pd.read_csv('UK_NIR_2022_HFC-134a.csv')
-hfc134a.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-#hfc134a.replace("NA,NO", 0, inplace=True)
-hfc134a.fillna(0, inplace=True)
-#hfc134a
-
-hfc143a = pd.read_csv('UK_NIR_2022_HFC-143a.csv')
-hfc143a.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-#hfc143a.replace("NA,NO", 0, inplace=True)
-hfc143a.fillna(0, inplace=True)
-#hfc143a
-
-hfc152a = pd.read_csv('UK_NIR_2022_HFC-152a.csv')
-hfc152a.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-#hfc152a.replace("NA,NO", 0, inplace=True)
-hfc152a.fillna(0, inplace=True)
-#hfc152a
-
-hfc227ea = pd.read_csv('UK_NIR_2022_HFC-227ea.csv')
-hfc227ea.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-#hfc227ea.replace("NA,NO", 0, inplace=True)
-hfc227ea.fillna(0, inplace=True)
-#hfc227ea
-
-hfc245fa = pd.read_csv('UK_NIR_2022_HFC-245fa.csv')
-hfc245fa.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-#hfc245fa.replace("NA,NO", 0, inplace=True)
-hfc245fa.fillna(0, inplace=True)
-#hfc245fa
-
-hfc365mfc = pd.read_csv('UK_NIR_2022_HFC-365mfc.csv')
-hfc365mfc.set_index("GREENHOUSE GAS SOURCE AND SINK CATEGORIES", inplace=True)
-#hfc365mfc.replace("NA,NO", 0, inplace=True)
-hfc365mfc.fillna(0, inplace=True)
-#hfc365mfc
-
-
-# In[9]:
-
-
-hfc23.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *12690# + (hfc32.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *705) + (hfc4310mee.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1470) + (hfc125.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *3450) + (hfc134a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1360) + (hfc143a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *5080) + (hfc152a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *148) + (hfc227ea.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *3140) + (hfc245fa.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *880) + (hfc365mfc.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *810)
-
-
-# In[10]:
-
-
-test_ODS = (hfc23.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *14800) + (hfc32.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *675) + (hfc4310mee.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1640) + (hfc125.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *3500) + (hfc134a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1430) + (hfc143a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *4470) + (hfc152a.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *124) + (hfc227ea.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *3220) + (hfc245fa.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *1030) + (hfc365mfc.loc["F.  Product uses as substitutes for ODS(2)"] / 1000 *794)
-#test_ODS
-
-df_test = pd.DataFrame(test_ODS)
-df_test.set_index(pd.to_datetime(df_test.index, format='%Y'), inplace=True)
-
-df_test["ODS"] = df_test["F.  Product uses as substitutes for ODS(2)"] / 1000
-df_test["Total"] = invent_fgas_1["Total"]
-#df_test
-
+# Read in InTEM data
 
 # In[11]:
-
-
-#test2 = pd.read_csv(r'C:\Users\amar1\UNFCCC_data_local\2022\processed_data\totals\UK_NIR_2022_all_gases_yearly.csv')
-#test2.set_index("year", inplace=True)
-#test2.set_index(pd.to_datetime(test2.index, format='%Y'), inplace=True)
-#test2["Total"] = test2.sum(axis=1)
-#test2
-
-
-# In[12]:
-
-
-#test2["ODS"] = df_test["F.  Product uses as substitutes for ODS(2)"]
-#test2
-#fgas_fraction = test2["ODS"] / test2["Total"]
-#fgas_fraction
-
-
-# In[13]:
 
 
 def read_intem(species):
@@ -228,12 +95,11 @@ def read_intem(species):
     return df, species_str, species_units, species_gwp
 
 
-# In[14]:
+# In[12]:
 
 
 df_ch4, _, _, _ = read_intem("ch4")
 df_n2o, _, _, _ = read_intem("n2o")
-#df_ch4
 
 
 # In[15]:
@@ -254,39 +120,34 @@ for fg in fgas[1:]:
 df_fgas["InTEM_std"] = np.sqrt(uncert.values)
 
 
-# In[16]:
+# In[18]:
 
 
-df_fgas["InTEM_ODS"] = (df_test["ODS"] / df_test["Total"]) * df_fgas["InTEM"]
-df_fgas["InTEM_ODS_std"] = (df_test["ODS"] / df_test["Total"]) * df_fgas["InTEM_std"]
+df_fgas["InTEM_ODS"] = (dfODS["ODS"] / dfODS["Total"]) * df_fgas["InTEM"]
+df_fgas["InTEM_ODS_std"] = (dfODS["ODS"] / dfODS["Total"]) * df_fgas["InTEM_std"]
 #df_fgas
 
 
-# In[17]:
+# In[9]:
 
 
-energy_ch4_fraction = pd.DataFrame(dfCH4_CO2_equ.loc["1. Energy"] / dfCH4_CO2_equ.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Energy_Fraction"])
+energy_ch4_fraction = pd.DataFrame(dfCH4.loc["1. Energy"] / dfCH4.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Energy_Fraction"])
 energy_ch4_fraction.index = pd.to_datetime(energy_ch4_fraction.index, format='%Y')
-#energy_n2o_fraction
 
-industry_ch4_fraction = pd.DataFrame(dfCH4_CO2_equ.loc["2.  Industrial processes"] / dfCH4_CO2_equ.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Industry_Fraction"])
+industry_ch4_fraction = pd.DataFrame(dfCH4.loc["2.  Industrial processes"] / dfCH4.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Industry_Fraction"])
 industry_ch4_fraction.index = pd.to_datetime(industry_ch4_fraction.index, format='%Y')
-#industry_n2o_fraction
 
-agri_ch4_fraction = pd.DataFrame(dfCH4_CO2_equ.loc["3.  Agriculture"] / dfCH4_CO2_equ.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Agri_Fraction"])
+agri_ch4_fraction = pd.DataFrame(dfCH4.loc["3.  Agriculture"] / dfCH4.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Agri_Fraction"])
 agri_ch4_fraction.index = pd.to_datetime(agri_ch4_fraction.index, format='%Y')
-#agri_n2o_fraction
 
-lulucf_ch4_fraction = pd.DataFrame(dfCH4_CO2_equ.loc["4. Land use, land-use change and forestry"] / dfCH4_CO2_equ.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["LULUCF_Fraction"])
+lulucf_ch4_fraction = pd.DataFrame(dfCH4.loc["4. Land use, land-use change and forestry"] / dfCH4.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["LULUCF_Fraction"])
 lulucf_ch4_fraction.index = pd.to_datetime(lulucf_ch4_fraction.index, format='%Y')
-#lulucf_n2o_fraction
 
-waste_ch4_fraction = pd.DataFrame(dfCH4_CO2_equ.loc["5.  Waste"] / dfCH4_CO2_equ.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Waste_Fraction"])
+waste_ch4_fraction = pd.DataFrame(dfCH4.loc["5.  Waste"] / dfCH4.loc["Total CH4 emissions with CH4 from LULUCF"], columns=["Waste_Fraction"])
 waste_ch4_fraction.index = pd.to_datetime(waste_ch4_fraction.index, format='%Y')
-#waste_n2o_fraction
 
 
-# In[18]:
+# In[14]:
 
 
 frames = [energy_ch4_fraction, industry_ch4_fraction, agri_ch4_fraction, lulucf_ch4_fraction, waste_ch4_fraction, df_ch4]
@@ -307,34 +168,29 @@ df_ch4_new["InTEM_LULUCF_std"] = df_ch4_new["InTEM_std"] *df_ch4_new["LULUCF_Fra
 df_ch4_new["InTEM_Waste"] = df_ch4_new["InTEM"] *df_ch4_new["Waste_Fraction"]
 df_ch4_new["InTEM_Waste_std"] = df_ch4_new["InTEM_std"] *df_ch4_new["Waste_Fraction"]
 
-#df_ch4_new
+
+# Breakdown N2O
+
+# In[23]:
 
 
-# In[19]:
-
-
-energy_n2o_fraction = pd.DataFrame(dfN2O_CO2_equ.loc["1. Energy"] / dfN2O_CO2_equ.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Energy_Fraction"])
+energy_n2o_fraction = pd.DataFrame(dfN2O.loc["1. Energy"] / dfN2O.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Energy_Fraction"])
 energy_n2o_fraction.index = pd.to_datetime(energy_n2o_fraction.index, format='%Y')
-#energy_n2o_fraction
 
-industry_n2o_fraction = pd.DataFrame(dfN2O_CO2_equ.loc["2.  Industrial processes"] / dfN2O_CO2_equ.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Industry_Fraction"])
+industry_n2o_fraction = pd.DataFrame(dfN2O.loc["2.  Industrial processes"] / dfN2O.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Industry_Fraction"])
 industry_n2o_fraction.index = pd.to_datetime(industry_n2o_fraction.index, format='%Y')
-#industry_n2o_fraction
 
-agri_n2o_fraction = pd.DataFrame(dfN2O_CO2_equ.loc["3.  Agriculture"] / dfN2O_CO2_equ.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Agri_Fraction"])
+agri_n2o_fraction = pd.DataFrame(dfN2O.loc["3.  Agriculture"] / dfN2O.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Agri_Fraction"])
 agri_n2o_fraction.index = pd.to_datetime(agri_n2o_fraction.index, format='%Y')
-#agri_n2o_fraction
 
-lulucf_n2o_fraction = pd.DataFrame(dfN2O_CO2_equ.loc["4. Land use, land-use change and forestry"] / dfN2O_CO2_equ.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["LULUCF_Fraction"])
+lulucf_n2o_fraction = pd.DataFrame(dfN2O.loc["4. Land use, land-use change and forestry"] / dfN2O.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["LULUCF_Fraction"])
 lulucf_n2o_fraction.index = pd.to_datetime(lulucf_n2o_fraction.index, format='%Y')
-#lulucf_n2o_fraction
 
-waste_n2o_fraction = pd.DataFrame(dfN2O_CO2_equ.loc["5.  Waste"] / dfN2O_CO2_equ.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Waste_Fraction"])
+waste_n2o_fraction = pd.DataFrame(dfN2O.loc["5.  Waste"] / dfN2O.loc["Total direct N2O emissions with N2O from LULUCF"], columns=["Waste_Fraction"])
 waste_n2o_fraction.index = pd.to_datetime(waste_n2o_fraction.index, format='%Y')
-#waste_n2o_fraction
 
 
-# In[20]:
+# In[24]:
 
 
 frames = [energy_n2o_fraction, industry_n2o_fraction, agri_n2o_fraction, lulucf_n2o_fraction, waste_n2o_fraction, df_n2o]
@@ -355,49 +211,44 @@ df_n2o_new["InTEM_LULUCF_std"] = df_n2o_new["InTEM_std"] *df_n2o_new["LULUCF_Fra
 df_n2o_new["InTEM_Waste"] = df_n2o_new["InTEM"] *df_n2o_new["Waste_Fraction"]
 df_n2o_new["InTEM_Waste_std"] = df_n2o_new["InTEM_std"] *df_n2o_new["Waste_Fraction"]
 
-#df_n2o_new
+
+# Sum of N2O and CH4
+
+# In[25]:
 
 
-# In[21]:
+energy_both = dfN2O.loc["1. Energy"] + dfCH4.loc["1. Energy"]
+industrial_both = dfN2O.loc["2.  Industrial processes"] + dfCH4.loc["2.  Industrial processes"]
+agricultural_both = dfN2O.loc["3.  Agriculture"] + dfCH4.loc["3.  Agriculture"]
+LULUCF_both = dfN2O.loc["4. Land use, land-use change and forestry"] + dfCH4.loc["4. Land use, land-use change and forestry"]
+waste_both = dfN2O.loc["5.  Waste"] + dfCH4.loc["5.  Waste"]
 
 
-energy_both = dfN2O_CO2_equ.loc["1. Energy"] + dfCH4_CO2_equ.loc["1. Energy"]
-industrial_both = dfN2O_CO2_equ.loc["2.  Industrial processes"] + dfCH4_CO2_equ.loc["2.  Industrial processes"]
-agricultural_both = dfN2O_CO2_equ.loc["3.  Agriculture"] + dfCH4_CO2_equ.loc["3.  Agriculture"]
-LULUCF_both = dfN2O_CO2_equ.loc["4. Land use, land-use change and forestry"] + dfCH4_CO2_equ.loc["4. Land use, land-use change and forestry"]
-waste_both = dfN2O_CO2_equ.loc["5.  Waste"] + dfCH4_CO2_equ.loc["5.  Waste"]
-
-
-# In[22]:
+# In[27]:
 
 
 energy_both_intem = pd.DataFrame(df_n2o_new["InTEM_Energy"] + df_ch4_new["InTEM_Energy"], columns=["InTEM_Energy"])
 energy_both_intem["InTEM_Energy_std"] = df_n2o_new["InTEM_Energy_std"] + df_ch4_new["InTEM_Energy_std"]
 energy_both_intem.index = pd.to_datetime(energy_both_intem.index, format='%Y')
-#energy_both_intem
 
 industrial_both_intem = pd.DataFrame(df_n2o_new["InTEM_Industry"] + df_ch4_new["InTEM_Industry"], columns=["InTEM_Industry"])
 industrial_both_intem["InTEM_Industry_std"] = df_n2o_new["InTEM_Industry_std"] + df_ch4_new["InTEM_Industry_std"]
 industrial_both_intem.index = pd.to_datetime(industrial_both_intem.index, format='%Y')
-#industrial_both_intem
 
 agricultural_both_intem = pd.DataFrame(df_n2o_new["InTEM_Agriculture"] + df_ch4_new["InTEM_Agriculture"], columns=["InTEM_Agriculture"])
 agricultural_both_intem["InTEM_Agriculture_std"] = df_n2o_new["InTEM_Agriculture_std"] + df_ch4_new["InTEM_Agriculture_std"]
 agricultural_both_intem.index = pd.to_datetime(agricultural_both_intem.index, format='%Y')
-#agricultural_both_intem
 
 LULUCF_both_intem = pd.DataFrame(df_n2o_new["InTEM_LULUCF"] + df_ch4_new["InTEM_LULUCF"], columns=["InTEM_LULUCF"])
 LULUCF_both_intem["InTEM_LULUCF_std"] = df_n2o_new["InTEM_LULUCF_std"] + df_ch4_new["InTEM_LULUCF_std"]
 LULUCF_both_intem.index = pd.to_datetime(LULUCF_both_intem.index, format='%Y')
-#LULUCF_both_intem
 
 waste_both_intem = pd.DataFrame(df_n2o_new["InTEM_Waste"] + df_ch4_new["InTEM_Waste"], columns=["InTEM_Waste"])
 waste_both_intem["InTEM_Waste_std"] = df_n2o_new["InTEM_Waste_std"] + df_ch4_new["InTEM_Waste_std"]
 waste_both_intem.index = pd.to_datetime(waste_both_intem.index, format='%Y')
-#waste_both_intem
 
 
-# In[23]:
+# In[28]:
 
 
 fig2 = go.Figure()
@@ -554,36 +405,15 @@ fig2.add_trace(go.Scatter(
     name="Waste",
     ))
 
-#fig2.add_trace(go.Scatter(
-#    x=date_range,
-#    y=invent_fgas_1["Total"],
-#    mode='lines',
-#    line=dict(color=color_6[0], width=3.),
-#    showlegend=True,
-#    hovertemplate = 'Inventory F Gases %{x|%Y}: %{y:.0f} Gt yr⁻¹<extra></extra>',
-#    name="F Gases",
-#    ))
-
 fig2.add_trace(go.Scatter(
     x=date_range,
-    y=df_test["ODS"],
+    y=dfODS["ODS"],
     mode='lines',
     line=dict(color=color_6[0], width=3.),
     showlegend=True,
     hovertemplate = 'Inventory Product uses as substitutes for ODS %{x|%Y}: %{y:.0f} Gt yr⁻¹<extra></extra>',
     name="Product uses as substitutes for ODS",
     ))
-
-#errorbars(df_fgas, "InTEM", color_6, None, "InTEM")
-#fig2.add_trace(go.Scatter(
-#    x=date_range,
-#    y=df_fgas["InTEM"],
-#    mode='lines',
-#    line=dict(color=color_6[0], dash = "dot",  width=5),
-#    showlegend=False,
-#    hovertemplate = 'InTEM F Gases %{x|%Y}: %{y:.0f} Gt yr⁻¹<extra></extra>',
-#    name="F Gases",
-#    ))
 
 errorbars(df_fgas, "InTEM_ODS", color_6, None, "InTEM")
 fig2.add_trace(go.Scatter(
@@ -635,4 +465,293 @@ fig2.layout.font.family="Arial"
 #fig2.write_html("Annual_Emissions_by_sector.html")
 
 fig2.show()
+
+
+# In[2]:
+
+
+from dash import dcc
+
+
+# In[43]:
+
+
+dcc.Graph(id='fig2', style={'width': '90vw', 'height': '90vh'}) 
+
+
+# In[49]:
+
+
+from IPython.display import display, HTML, IFrame, Image
+
+
+# Here is a diagram showing the locations of all the sites associated with the DECC network:
+
+# In[50]:
+
+
+display(Image("UKDECCnetwork_2021.png", width = 700, height = 800))
+
+
+# In[3]:
+
+
+import xarray as xr
+
+
+# In[4]:
+
+
+ds_flux = xr.open_dataset("data/flux_data.nc")
+ds_flux
+
+
+# In[5]:
+
+
+Intem_new = xr.DataArray.to_dataframe(ds_flux.country_post_mean)
+Intem_new.reset_index(drop=False, inplace=True)
+Intem_new.set_index("time", inplace=True)
+Intem_new.index = pd.to_datetime(Intem_new.index, format='%Y')
+Intem_new.drop("country", axis=1,  inplace=True)
+
+Intem_new_std = xr.DataArray.to_dataframe(ds_flux.country_post_std)
+Intem_new_std.reset_index(drop=False, inplace=True)
+Intem_new_std.set_index("time", inplace=True)
+Intem_new_std.index = pd.to_datetime(Intem_new_std.index, format='%Y')
+Intem_new_std.drop("country", axis=1,  inplace=True)
+
+Intem_new["country_post_mean_std"] = Intem_new_std["country_post_std"]
+
+
+# In[164]:
+
+
+Intem_new["InTEM_new_ODS"] = (df_test["ODS"] / df_test["Total"]) * Intem_new["country_post_mean"]
+#df_fgas["InTEM_new_ODS_std"] = (df_test["ODS"] / df_test["Total"]) * df_fgas["InTEM_std"]
+
+
+# In[6]:
+
+
+def weighted_temporal_mean(ds, var):
+
+    month_length = ds_flux.time.dt.days_in_month
+
+    # Calculate the weights
+    wgts = month_length.groupby("time.year") / month_length.groupby("time.year").sum()
+
+    # Make sure the weights in each year add up to 1
+    np.testing.assert_allclose(wgts.groupby("time.year").sum(xr.ALL_DIMS), 1.0)
+
+    # Subset our dataset for our variable
+    obs = ds_flux[var]
+
+    # Setup our masking for nan values
+    cond = obs.isnull()
+    ones = xr.where(cond, 0.0, 1.0)
+
+    # Calculate the numerator
+    obs_sum = (obs * wgts).resample(time="AS").sum(dim="time")
+
+    # Calculate the denominator
+    ones_out = (ones * wgts).resample(time="AS").sum(dim="time")
+    
+    return obs_sum / ones_out
+
+
+# In[7]:
+
+
+Intem_new_year = weighted_temporal_mean(ds_flux, "flux_prior")
+Intem_new_year_std = weighted_temporal_mean(ds_flux, "country_post_std")
+
+
+# In[8]:
+
+
+Intem_new_year_series = Intem_new_year.to_series()
+Intem_new_year_df = Intem_new_year_series.to_frame()
+Intem_new_year_df.reset_index(drop=False, inplace=True)
+Intem_new_year_df.set_index("time", inplace=True)
+Intem_new_year_df.index = pd.to_datetime(Intem_new_year_df.index, format='%Y')
+#Intem_new_year_df.drop("country", axis=1,  inplace=True)
+
+#Intem_new_year_series_std = Intem_new_year_std.to_series()
+#Intem_new_year_std_df = Intem_new_year_series_std.to_frame()
+#Intem_new_year_std_df.reset_index(drop=False, inplace=True)
+#Intem_new_year_std_df.set_index("time", inplace=True)
+#Intem_new_year_std_df.index = pd.to_datetime(Intem_new_year_df.index, format='%Y')
+#Intem_new_year_std_df.drop("country", axis=1,  inplace=True)
+
+#Intem_new_year_df["std"] = Intem_new_year_std_df[0]
+#Intem_new_year_df["InTEM_ODS"] = (df_test["ODS"] / df_test["Total"]) *Intem_new_year_df[0]
+#Intem_new_year_df["InTEM_ODS_std"] = (df_test["ODS"] / df_test["Total"]) *Intem_new_year_std_df[0]
+
+#Intem_new_year_df
+
+
+# In[10]:
+
+
+df2012 = Intem_new_year[dict(time=0)]
+#df2012
+
+
+# In[11]:
+
+
+df2012_series = df2012.to_series()
+df2012_df = df2012_series.to_frame()
+#df2012_df.reset_index(drop=False, inplace=True)
+#df2012_df.set_index("time", inplace=True)
+#df2012_df.index = pd.to_datetime(df2012_df.index, format='%Y')
+df2012_df
+
+
+# In[12]:
+
+
+def read_intem_ch4(year, species):
+    import pandas as pd
+    from itertools import takewhile
+    import plotly.graph_objects as go
+    import base64
+    import numpy as np
+    import glob
+    import xarray as xr
+    
+    csv = glob.glob(f"data/ch4-ukghg-{species}_EUROPE_{year}.nc")
+    
+    flux = xr.open_dataset(csv[0])
+    
+    return flux
+
+
+# In[18]:
+
+
+total2012 = read_intem_ch4("2012", "total")
+total2012_df = xr.DataArray.to_dataframe(total2012.flux)
+total2012
+
+
+# In[14]:
+
+
+agri2012 = read_intem_ch4("2012", "agric")
+agri2012_df = xr.DataArray.to_dataframe(agri2012.flux)
+
+domcom2012 = read_intem_ch4("2012", "domcom")
+domcom2012_df = xr.DataArray.to_dataframe(domcom2012.flux)
+
+energyprod2012 = read_intem_ch4("2012", "energyprod")
+energyprod2012_df = xr.DataArray.to_dataframe(energyprod2012.flux)
+
+indcom2012 = read_intem_ch4("2012", "indcom")
+indcom2012_df = xr.DataArray.to_dataframe(indcom2012.flux)
+
+indproc2012 = read_intem_ch4("2012", "indproc")
+indproc2012_df = xr.DataArray.to_dataframe(indproc2012.flux)
+
+natural2012 = read_intem_ch4("2012", "natural")
+natural2012_df = xr.DataArray.to_dataframe(natural2012.flux)
+
+offshore2012 = read_intem_ch4("2012", "offshore")
+offshore2012_df = xr.DataArray.to_dataframe(offshore2012.flux)
+
+othertrans2012 = read_intem_ch4("2012", "othertrans")
+othertrans2012_df = xr.DataArray.to_dataframe(othertrans2012.flux)
+
+roadtrans2012 = read_intem_ch4("2012", "roadtrans")
+roadtrans2012_df = xr.DataArray.to_dataframe(roadtrans2012.flux)
+
+waste2012 = read_intem_ch4("2012", "waste")
+waste2012_df = xr.DataArray.to_dataframe(waste2012.flux)
+
+
+# In[15]:
+
+
+df2012_df["agri2012"] = agri2012_df["flux"]
+df2012_df["total2012"] = total2012_df["flux"]
+df2012_df["domcom2012"] = domcom2012_df["flux"]
+df2012_df["energyprod2012"] = energyprod2012_df["flux"]
+df2012_df["indcom2012"] = indcom2012_df["flux"]
+df2012_df["indproc2012"] = indproc2012_df["flux"]
+df2012_df["natural2012"] = natural2012_df["flux"]
+df2012_df["offshore2012"] = offshore2012_df["flux"]
+df2012_df["othertrans2012"] = othertrans2012_df["flux"]
+df2012_df["roadtrans2012"] = roadtrans2012_df["flux"]
+df2012_df["waste2012"] = waste2012_df["flux"]
+df2012_df
+
+
+# In[16]:
+
+
+df2012_df.sum()
+
+
+# In[17]:
+
+
+df2012_df["agri_fraction"] = df2012_df["agri2012"] / df2012_df["total2012"]
+df2012_df
+
+
+# In[19]:
+
+
+agri_fraction = agri2012.flux / total2012.flux
+testag = xr.DataArray.to_dataframe(agri_fraction)
+testag
+testag.sum()
+agri_fraction
+
+
+# In[58]:
+
+
+Intem_new_year
+
+
+# In[59]:
+
+
+agri_fraction
+
+
+# In[57]:
+
+
+agri_fract_intem = Intem_new_year * agri_fraction
+agri_fract_intem_t0 = agri_fract_intem[dict(time=0)]
+agri_fract_intem_t0.flux.plot()
+
+
+# In[3]:
+
+
+Intem_agri = xr.DataArray.to_dataframe(agri_flux.flux)
+Intem_agri
+
+
+# In[7]:
+
+
+agrifp_t0 = agri_flux[dict(time=5)]
+agrifp_t0.flux.plot()
+
+
+# In[6]:
+
+
+
+
+
+# In[ ]:
+
+
+
 
