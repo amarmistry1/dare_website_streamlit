@@ -18,6 +18,7 @@ import plotly.graph_objects as go
 import base64
 import numpy as np
 import glob
+import plotly
 
 from fig_mods.getdata import load_ch4
 from fig_mods.getdata import load_n2o
@@ -38,6 +39,8 @@ import cartopy.crs as ccrs
 from cartopy.mpl.ticker import LongitudeFormatter, LatitudeFormatter
 
 from fig_mods.nextstep import areagrid
+
+import ipywidgets as widgets
 
 
 # In[2]:
@@ -64,6 +67,8 @@ for name in (fgases):
     
 dfODS["ODS"] = dfODS.sum(axis=1) / 1000
 dfODS["Total"] = invent_fgas_total.sum(axis=1) / 1000
+
+#dfODS
 
 
 # In[4]:
@@ -238,12 +243,12 @@ fig.update_layout(
     #         "x": 0.01},
     yaxis_title="CO<sub>2</sub>-equivalent emissions (Gt yr⁻¹)",
     template="none",
-    autosize=False,
-    width=1000,
-    height=600,
+    autosize=True,
+    width=800,
+    height=480,
     legend=dict(
         yanchor="top",
-        y=0.77,
+        y=0.8,
         xanchor="right",
         x=0.99,
         traceorder="normal"),
@@ -252,7 +257,7 @@ fig.update_layout(
     # plot_bgcolor='rgba(0,0,0,0)'
 )
 
-fig.layout.font.size=20
+fig.layout.font.size=15
 fig.layout.font.family="Arial"
 
 fig.update_xaxes(range=[pd.Timestamp("1990-01-01"),
@@ -303,7 +308,7 @@ fig.add_annotation(
     showarrow=False,
     font=dict(
         family="Arial",
-        size=15,
+        size=12,
         color="Grey",
         )
 )
@@ -332,7 +337,7 @@ fig.add_annotation(
     showarrow=False,
     font=dict(
         family="Arial",
-        size=15,
+        size=12,
         color="Grey",
         )
 )
@@ -517,8 +522,7 @@ def read_invent_ch4(year, species):
     cropped_ds = flux.sel(lat=slice(min_lat,max_lat), lon=slice(min_lon,max_lon))
     
     cropped_ds1 = cropped_ds[dict(time=0)] * area
-    
-    flux1 = flux[dict(time=0)] #* area
+
     
     return cropped_ds1
 
@@ -526,326 +530,129 @@ def read_invent_ch4(year, species):
 # In[15]:
 
 
+#!!!UNDER MAINTENANCE - REMEMBER TO CONVERT TO MARKDOWN BEFORE LOGGING OFF!!!
+
 years = ["2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
 
-for name in years:
+test_dict = {"2012": intem_by_year(0), 
+         "2013":intem_by_year(1), 
+         "2014":intem_by_year(2), 
+         "2015":intem_by_year(3), 
+         "2016":intem_by_year(4), 
+         "2017":intem_by_year(5), 
+         "2018":intem_by_year(6), 
+         "2019":intem_by_year(7), 
+         "2020":intem_by_year(8)}
+species = ["1. Energy", "2.  Industrial processes", "3.  Agriculture", "4. Land use, land-use change and forestry", "5.  Waste"]
+
+spatial_ch4 = pd.DataFrame(index = years, columns = species)
+spatial_ch4.index = pd.to_datetime(spatial_ch4.index, format='%Y')
+
+f_spatial_ch4 = pd.DataFrame(index = years, columns = species)
+f_spatial_ch4.index = pd.to_datetime(spatial_ch4.index, format='%Y')
+
+
+for key_iterator, value_iterator in test_dict.items():
     
-    a = read_invent_ch4(name, "domcom")
-    b = read_invent_ch4(name, "energyprod")
-    c = read_invent_ch4(name, "offshore")
-    d = read_invent_ch4(name, "othertrans")
-    e = read_invent_ch4(name, "roadtrans")
-    f = read_invent_ch4(name, "total")
+    a = read_invent_ch4(key_iterator, "domcom")
+    b = read_invent_ch4(key_iterator, "energyprod")
+    c = read_invent_ch4(key_iterator, "offshore")
+    d = read_invent_ch4(key_iterator, "othertrans")
+    e = read_invent_ch4(key_iterator, "roadtrans")
+    f = read_invent_ch4(key_iterator, "total")
     
     fract = 100*(a.flux + b.flux + c.flux + d.flux + e.flux / f.flux)
     
     fract = np.clip(fract, 0, 100)
     
     test = fract.reindex_like(Intem2012, method='nearest', tolerance=0.01)
+       
+    te12_test = test/100 * value_iterator
+    te12_test = te12_test.sum()
     
+    spatial_ch4.loc[key_iterator, "1. Energy"] = te12_test    
+        
+    fe12_test = fract.mean()/100
     
-    if name == "2012":
-        tenerg12 = test/100 * intem_by_year(0)
-        te12 = tenerg12.sum()
-        
-        fe12 = fract.mean()/100
-        
-    if name == "2013":
-        tenerg13 = test/100 * intem_by_year(1)
-        te13 = tenerg13.sum()
-        
-        fe13 = fract.mean()/100
-        
-    if name == "2014":
-        tenerg14 = test/100 * intem_by_year(2)
-        te14 = tenerg14.sum()
-        
-        fe14 = fract.mean()/100
-        
-    if name == "2015":
-        tenerg15 = test/100 * intem_by_year(3)
-        te15 = tenerg15.sum()
-        
-        fe15 = fract.mean()/100
-    
-    if name == "2016":
-        tenerg16 = test/100 * intem_by_year(4)
-        te16 = tenerg16.sum()
-        
-        fe16 = fract.mean()/100
-        
-    if name == "2017":
-        tenerg17 = test/100 * intem_by_year(5)
-        te17 = tenerg17.sum()
-        
-        fe17 = fract.mean()/100
-        
-    if name == "2018":
-        tenerg18 = test/100 * intem_by_year(6)
-        te18 = tenerg18.sum()
-        
-        fe18 = fract.mean()/100
-        
-    if name == "2019":
-        tenerg19 = test/100 * intem_by_year(7)
-        te19 = tenerg19.sum()
-        
-        fe19 = fract.mean()/100
-        
-    if name == "2020":
-        tenerg20 = test/100 * intem_by_year(8)
-        te20 = tenerg20.sum()
-        
-        fe20 = fract.mean()/100
-
-    
-te = xr.concat((te12, te13, te14, te15, te16, te17, te18, te19, te20), dim="time")
-te = te * 16 * 31536000 * 28 / 10000000000000
-te = te.to_pandas()
-
-fe = xr.concat((fe12, fe13, fe14, fe15, fe16, fe17, fe18, fe19, fe20), dim="time")
-
-fe = fe.to_pandas()
+    f_spatial_ch4.loc[key_iterator, "1. Energy"] = fe12_test    
 
 
 # In[16]:
 
 
-years = ["2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
-
-for name, in zip(years):
+for key_iterator, value_iterator in test_dict.items():
     
-    a = read_invent_ch4(name, "indcom")
-    c = read_invent_ch4(name, "indproc")
-    b = read_invent_ch4(name, "total")
+    a = read_invent_ch4(key_iterator, "indcom")
+    b = read_invent_ch4(key_iterator, "indproc")
+    c = read_invent_ch4(key_iterator, "total")
     
-    fract = 100*(a.flux + c.flux / b.flux)
+    fract = 100*(a.flux + b.flux / c.flux)
     
     fract = np.clip(fract, 0, 100)
     
     test = fract.reindex_like(Intem2012, method='nearest', tolerance=0.01)
+       
+    te12_test = test/100 * value_iterator
+    te12_test = te12_test.sum()
     
-    if name == "2012":
-        tind12 = test/100 * intem_by_year(0)
-        ti12 = tind12.sum()
+    spatial_ch4.loc[key_iterator, "2.  Industrial processes"] = te12_test    
         
-        find12 = fract.mean()/100
-        
-    if name == "2013":
-        tind13 = test/100 * intem_by_year(1)
-        ti13 = tind13.sum()
-        
-        find13 = fract.mean()/100
-        
-    if name == "2014":
-        tind14 = test/100 * intem_by_year(2)
-        ti14 = tind14.sum()
-        
-        find14 = fract.mean()/100
-        
-    if name == "2015":
-        tind15 = test/100 * intem_by_year(3)
-        ti15 = tind15.sum()
-        
-        find15 = fract.mean()/100
-        
-    if name == "2016":
-        tind16 = test/100 * intem_by_year(4)
-        ti16 = tind16.sum()
-        
-        find16 = fract.mean()/100
-        
-    if name == "2017":
-        tind17 = test/100 * intem_by_year(5)
-        ti17 = tind17.sum()
-        
-        find17 = fract.mean()/100
-        
-    if name == "2018":
-        tind18 = test/100 * intem_by_year(6)
-        ti18 = tind18.sum()
-        
-        find18 = fract.mean()/100
-        
-    if name == "2019":
-        tind19 = test/100 * intem_by_year(7)
-        ti19 = tind19.sum()
-        
-        find19 = fract.mean()/100
-        
-    if name == "2020":
-        tind20 = test/100 * intem_by_year(8)
-        ti20 = tind20.sum()
-        
-        find20 = fract.mean()/100
+    fe12_test = fract.mean()/100
     
-tind = xr.concat((ti12, ti13, ti14, ti15, ti16, ti17, ti18, ti19, ti20), dim="time")
-tind = tind * 16 * 31536000 * 28 / 1000000000000
-tind = tind.to_pandas()
-
-find = xr.concat((find12, find13, find14, find15, find16, find17, find18, find19, find20), dim="time")
-
-find = find.to_pandas()
+    f_spatial_ch4.loc[key_iterator, "2.  Industrial processes"] = fe12_test    
 
 
 # In[17]:
 
 
-years = ["2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
-
-for name, in zip(years):
+for key_iterator, value_iterator in test_dict.items():
     
-    a = read_invent_ch4(name, "agric")
-    b = read_invent_ch4(name, "total")
+    a = read_invent_ch4(key_iterator, "agric")
+    b = read_invent_ch4(key_iterator, "total")
     
     fract = 100*(a.flux / b.flux)
     
     fract = np.clip(fract, 0, 100)
     
     test = fract.reindex_like(Intem2012, method='nearest', tolerance=0.01)
+       
+    te12_test = test/100 * value_iterator
+    te12_test = te12_test.sum()
     
-    if name == "2012":
-        tagri12 = test/100 * intem_by_year(0)
-        ta12 = tagri12.sum()
+    spatial_ch4.loc[key_iterator, "3.  Agriculture"] = te12_test    
         
-        fa12 = fract.mean()/100
-        
-    if name == "2013":
-        tagri13 = test/100 * intem_by_year(1)
-        ta13 = tagri13.sum()
-        
-        fa13 = fract.mean()/100
-        
-    if name == "2014":
-        tagri14 = test/100 * intem_by_year(2)
-        ta14 = tagri14.sum()
-        
-        fa14 = fract.mean()/100
-        
-    if name == "2015":
-        tagri15 = test/100 * intem_by_year(3)
-        ta15 = tagri15.sum()
-        
-        fa15 = fract.mean()/100
-        
-    if name == "2016":
-        tagri16 = test/100 * intem_by_year(4)
-        ta16 = tagri16.sum()
-        
-        fa16 = fract.mean()/100
-        
-    if name == "2017":
-        tagri17 = test/100 * intem_by_year(5)
-        ta17 = tagri17.sum()
-        
-        fa17 = fract.mean()/100
-        
-    if name == "2018":
-        tagri18 = test/100 * intem_by_year(6)
-        ta18 = tagri18.sum()
-        
-        fa18 = fract.mean()/100
-        
-    if name == "2019":
-        tagri19 = test/100 * intem_by_year(7)
-        ta19 = tagri19.sum()
-        
-        fa19 = fract.mean()/100
-        
-    if name == "2020":
-        tagri20 = test/100 * intem_by_year(8)
-        ta20 = tagri20.sum()
-        
-        fa20 = fract.mean()/100
+    fe12_test = fract.mean()/100
     
-ta = xr.concat((ta12, ta13, ta14, ta15, ta16, ta17, ta18, ta19, ta20), dim="time")
-ta = ta * 16 * 31536000 * 28 / 1000000000000
-ta = ta.to_pandas()
-
-fa = xr.concat((fa12, fa13, fa14, fa15, fa16, fa17, fa18, fa19, fa20), dim="time")
-
-fa = fa.to_pandas()
+    f_spatial_ch4.loc[key_iterator, "3.  Agriculture"] = fe12_test    
 
 
 # In[18]:
 
 
-years = ["2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
-
-for name, in zip(years):
+for key_iterator, value_iterator in test_dict.items():
     
-    a = read_invent_ch4(name, "waste")
-    b = read_invent_ch4(name, "total")
+    a = read_invent_ch4(key_iterator, "waste")
+    b = read_invent_ch4(key_iterator, "total")
     
     fract = 100*(a.flux / b.flux)
     
     fract = np.clip(fract, 0, 100)
     
     test = fract.reindex_like(Intem2012, method='nearest', tolerance=0.01)
+       
+    te12_test = test/100 * value_iterator
+    te12_test = te12_test.sum()
     
-    if name == "2012":
-        twaste12 = test/100 * intem_by_year(0)
-        tw12 = twaste12.sum()
+    spatial_ch4.loc[key_iterator, "5.  Waste"] = te12_test    
         
-        fw12 = fract.mean()/100
-        
-    if name == "2013":
-        twaste13 = test/100 * intem_by_year(1)
-        tw13 = twaste13.sum()
-        
-        fw13 = fract.mean()/100
-        
-    if name == "2014":
-        twaste14 = test/100 * intem_by_year(2)
-        tw14 = twaste14.sum()
-        
-        fw14 = fract.mean()/100
-        
-    if name == "2015":
-        twaste15 = test/100 * intem_by_year(3)
-        tw15 = twaste15.sum()
-        
-        fw15 = fract.mean()/100
-        
-    if name == "2016":
-        twaste16 = test/100 * intem_by_year(4)
-        tw16 = twaste16.sum()
-        
-        fw16 = fract.mean()/100
-        
-    if name == "2017":
-        twaste17 = test/100 * intem_by_year(5)
-        tw17 = twaste17.sum()
-        
-        fw17 = fract.mean()/100
-        
-    if name == "2018":
-        twaste18 = test/100 * intem_by_year(6)
-        tw18 = twaste18.sum()
-        
-        fw18 = fract.mean()/100
-        
-    if name == "2019":
-        twaste19 = test/100 * intem_by_year(7)
-        tw19 = twaste19.sum()
-        
-        fw19 = fract.mean()/100
-        
-    if name == "2020":
-        twaste20 = test/100 * intem_by_year(8)
-        tw20 = twaste20.sum()
-        
-        fw20 = fract.mean()/100
-        
-twaste = xr.concat((tw12, tw13, tw14, tw15, tw16, tw17, tw18, tw19, tw20), dim="time")
-twaste = twaste * 16 * 31536000 * 28 / 1000000000000
-twaste = twaste.to_pandas()
-#twaste.reindex(InTEM_total.index)
-twaste.fillna(0, inplace=True)
+    fe12_test = fract.mean()/100
+    
+    f_spatial_ch4.loc[key_iterator, "5.  Waste"] = fe12_test    
 
-fw = xr.concat((fw12, fw13, fw14, fw15, fw16, fw17, fw18, fw19, fw20), dim="time")
+spatial_ch4_total = spatial_ch4 * 16 * 31536000 * 28 / 1000000000000
+spatial_ch4_total["1. Energy"] = spatial_ch4_total["1. Energy"] / 10
 
-fw = fw.to_pandas()
+#f_spatial_ch4
 
 
 # In[19]:
@@ -885,17 +692,18 @@ ch4_gt_all = ch4_gt
 year = ["2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
 
 for date in year:
-    ch4_gt_all.loc[date, "1. Energy"] = te.loc[date]
-    ch4_gt_all.loc[date, "2.  Industrial processes"] = tind.loc[date]
-    ch4_gt_all.loc[date, "3.  Agriculture"] = ta.loc[date]
+    ch4_gt_all.loc[date, "1. Energy"] = spatial_ch4_total.loc[date, "1. Energy"]
+    ch4_gt_all.loc[date, "2.  Industrial processes"] = spatial_ch4_total.loc[date, "2.  Industrial processes"]
+    ch4_gt_all.loc[date, "3.  Agriculture"] = spatial_ch4_total.loc[date, "3.  Agriculture"]
     #ch4_gt_all.loc[date, "4. Land use, land-use change and forestry"] = tLULUCF.loc[date]
-    ch4_gt_all.loc[date, "5.  Waste"] = twaste.loc[date]
+    ch4_gt_all.loc[date, "5.  Waste"] = spatial_ch4_total.loc[date, "5.  Waste"]
     
-    ch4_gt_all.loc[date, "1. Energy_std"] = ch4_fract.loc[date, "InTEM_std"] * (fe.loc[date])
-    ch4_gt_all.loc[date, "2.  Industrial processes_std"] = ch4_fract.loc[date, "InTEM_std"] * (find.loc[date])
-    ch4_gt_all.loc[date, "3.  Agriculture_std"] = ch4_fract.loc[date, "InTEM_std"] * (fa.loc[date])
+    ch4_gt_all.loc[date, "1. Energy_std"] = ch4_fract.loc[date, "InTEM_std"] * (f_spatial_ch4.loc[date, "1. Energy"])
+    ch4_gt_all.loc[date, "2.  Industrial processes_std"] = ch4_fract.loc[date, "InTEM_std"] * (f_spatial_ch4.loc[date, "2.  Industrial processes"])
+    ch4_gt_all.loc[date, "3.  Agriculture_std"] = ch4_fract.loc[date, "InTEM_std"] * (f_spatial_ch4.loc[date, "3.  Agriculture"])
     #ch4_gt_all.loc[date, "4. Land use, land-use change and forestry"] = tLULUCF.loc[date]
-    ch4_gt_all.loc[date, "5.  Waste_std"] = ch4_fract.loc[date, "InTEM_std"] * (fw.loc[date])
+    ch4_gt_all.loc[date, "5.  Waste_std"] = ch4_fract.loc[date, "InTEM_std"] * (f_spatial_ch4.loc[date, "5.  Waste"])
+#ch4_gt_all
 
 
 # In[22]:
@@ -951,10 +759,44 @@ InTEM_total = InTEM_total.reindex(ch4_gt.index)
 #InTEM_total.index = pd.to_datetime(InTEM_total.index, format='%Y')
 #InTEM_total.fillna(0)
 #InTEM_total.drop(["1990"], inplace=True)
+
 #InTEM_total
 
 
 # In[26]:
+
+
+ALL = 'ALL'
+def unique_sorted_values_plus_ALL(array):
+    unique = array.unique().tolist()
+    unique.sort()
+    unique.insert(0, ALL)
+    return unique
+
+
+# In[27]:
+
+
+dropdown_year = widgets.Dropdown(options = unique_sorted_values_plus_ALL(InTEM_total.index))
+
+output_year = widgets.Output()
+
+def dropdown_year_eventhandler(change):
+    output_year.clear_output()
+    with output_year:
+        if (change.new == ALL):
+            display(InTEM_total)
+        else:
+            display(InTEM_total[InTEM_total.index == change.new])
+
+dropdown_year.observe(dropdown_year_eventhandler, names='value')
+
+display(dropdown_year)
+
+display(output_year)
+
+
+# In[28]:
 
 
 ## zoomed in version
@@ -972,7 +814,19 @@ df_fgas = df_fgas.drop(["1990", "1991", "1992", "1993", "1994", "1995", "1996", 
                   "2010", "2011"])
 
 
-# In[27]:
+# In[29]:
+
+
+dfODS = dfODS.drop(["1990", "1991", "1992", "1993", "1994", "1995", "1996", "1997", "1998", "1999", 
+                  "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", 
+                  "2010", "2011"])
+
+
+# # Annual emissions broken down by sector (2012-2021)
+# 
+# Here we can show the most recent data broken down by sector 
+
+# In[30]:
 
 
 fig2 = go.Figure()
@@ -989,8 +843,8 @@ color_5 = ["rgba(142,229,238, 1)", f"rgba(142,229,238, {alpha})"]
 color_6 = ["rgba(169,169,169, 1)", f"rgba(169,169,169, {alpha})"]
 color_7 = ["rgba(0, 0, 0, 1)", f"rgba(0, 0, 0, {alpha})"]
 
-date_range = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
-#date_range = range=[pd.Timestamp("2012-01-01"), pd.Timestamp("2020-01-01")]
+#date_range = [2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+date_range = InTEM_total.index
 data_range1 = [2012, 2013, 2014, 2015]
 
 def errorbars(df, var, color, dash, name, showlegend=False):
@@ -1218,8 +1072,8 @@ fig2.update_layout(
     yaxis_title="Annual Emissions (GtCO₂-equ)",
     template="simple_white",
     autosize=False,
-    width=550*2,
-    height=400*2,
+    width=800,
+    height=550,
     legend=dict(
         yanchor="top",
         y=0.99,
@@ -1227,7 +1081,7 @@ fig2.update_layout(
         x=0.99,
         traceorder="normal",
         orientation="h",
-        font_size=18),
+        font_size=12),
     margin=dict(l=55, r=10, t=10, b=40),
     # paper_bgcolor='rgba(0,0,0,0)',
     # plot_bgcolor='rgba(0,0,0,0)'
@@ -1237,7 +1091,7 @@ fig2.update_layout(
 
 fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='Lightgrey')
 
-fig2.layout.font.size=20
+fig2.layout.font.size=12
 fig2.layout.font.family="Arial"
 
 fig2.update_xaxes(range=[pd.Timestamp("2012-01-01"),
@@ -1279,8 +1133,25 @@ fig2.write_image("Annual_Emissions_by_sector1.png")
 fig2.show()
 
 
-# In[ ]:
+# In[31]:
 
 
+InTEM_total.to_excel("InTEM_total.xlsx")
+ch4_gt_all.to_excel("ch4_InTEM.xlsx")
+n2o_gt.to_excel("n2o_InTEM.xlsx")
+dfODS.to_excel("ODS_InTEM.xlsx")
 
 
+# 
+# # Download Data
+# 
+# {download}`Click here to download the InTEM Methane and Nitrous Oxide data <InTEM_total.xlsx>`
+# 
+# 
+# {download}`Click here to download the InTEM Methane (CH4) data <ch4_InTEM.xlsx>`
+# 
+# 
+# {download}`Click here to download the InTEM Nitrous Oxide (N2O) data <n2o_InTEM.xlsx>`
+# 
+# 
+# {download}`Click here to download the InTEM fgas ODS data <ODS_InTEM.xlsx>`

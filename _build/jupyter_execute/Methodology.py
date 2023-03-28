@@ -4,6 +4,8 @@
 # # Methodology
 # 
 # This section will discuss the methodology surrounding the 2012-2015 data. 
+# 
+# 
 
 # In[1]:
 
@@ -60,19 +62,13 @@ ds_flux = ds_flux.sel(lat=slice(min_lat,max_lat), lon=slice(min_lon,max_lon))
 # In[4]:
 
 
-ds_flux
-
-
-# In[5]:
-
-
 lat = np.arange(50.041, 61.975002, 0.234)
 lon = np.arange(-11.66, 1.716001, 0.352)
 area = areagrid(lat, lon)
 #area
 
 
-# In[6]:
+# In[5]:
 
 
 ## Create a function to produce a mean flux reading for each year;
@@ -103,7 +99,7 @@ def weighted_temporal_mean(ds, var):
     return obs_sum / ones_out
 
 
-# In[7]:
+# In[6]:
 
 
 Intem_new_year = weighted_temporal_mean(ds_flux, "flux_prior")
@@ -113,13 +109,7 @@ Intem2014 = Intem_new_year[dict(time=2)] * area
 Intem2015 = Intem_new_year[dict(time=3)] * area
 
 
-# In[8]:
-
-
-Intem2013.plot()
-
-
-# In[9]:
+# In[7]:
 
 
 def read_invent_ch4_old(year, species):
@@ -147,7 +137,7 @@ def read_invent_ch4_old(year, species):
     return cropped_ds
 
 
-# In[10]:
+# In[8]:
 
 
 def read_invent_ch4(year, species):
@@ -176,14 +166,14 @@ def read_invent_ch4(year, species):
     return cropped_ds1
 
 
-# In[11]:
+# In[9]:
 
 
 test2012 = read_invent_ch4("2012", "total")
 test2012
 
 
-# In[12]:
+# In[10]:
 
 
 def plot_sector(year):
@@ -242,13 +232,13 @@ def plot_sector(year):
     fig.tight_layout()
 
 
-# In[13]:
+# In[11]:
 
 
 plot_sector("2013")
 
 
-# In[14]:
+# In[12]:
 
 
 def plot_sector_perc(year):
@@ -311,11 +301,48 @@ def plot_sector_perc(year):
     fig.tight_layout()
 
 
-# In[15]:
+# In[13]:
 
 
 plot_sector_perc("2013")
 
+
+# ---
+# 
+# ## Download Link
+# 
+# {download}`Download the *HFC.csv* file <data/UK_NIR_2022_HFC-125.csv>`
+# 
+# 
+# {download}`Download *.nc* file <data/flux_data.nc>`
+# 
+# 
+# {download}`Download *.xlsx* file <data/GBR_2022_2020_10052022_142545.xlsx>`
+
+# In[14]:
+
+
+```{admonition} An extra exercise
+:class: extra-credit
+<plot_sector_perc("2014")>
+```
+
+
+# :::{figure-md} markdown-fig
+# <plot_sector_perc("2014")>
+# 
+# This is a caption in **Markdown**!
+# :::
+
+# <p class='extra-credit' markdown='1'>
+# **Another paragraph** which allows *Markdown* within it.
+# </p>
+
+# <code class="extra-credit">
+#   code_line(1);
+#   // a code comment
+#   class More Code { }
+# </code>
 
 # In[ ]:
 
