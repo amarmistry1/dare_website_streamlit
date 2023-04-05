@@ -912,15 +912,15 @@ fig2.add_trace(go.Scatter(
     name="Agriculture",
     ))
 
-fig2.add_trace(go.Scatter(
-    x=date_range,
-    y=Invent_total["4. Land use, land-use change and forestry"],
-    mode='lines',
-    line=dict(color=color_4[0], width=3.),
-    showlegend=True,
-    hovertemplate = 'Inventory LULUCF %{x|%Y}: %{y:.0f} Gt yr⁻¹<extra></extra>',
-    name="Land use, Land-use change and forestry",
-    ))
+#fig2.add_trace(go.Scatter(
+#    x=date_range,
+#    y=Invent_total["4. Land use, land-use change and forestry"],
+#    mode='lines',
+#    line=dict(color=color_4[0], width=3.),
+#    showlegend=True,
+#    hovertemplate = 'Inventory LULUCF %{x|%Y}: %{y:.0f} Gt yr⁻¹<extra></extra>',
+#    name="Land use, Land-use change and forestry",
+#    ))
 
 fig2.add_trace(go.Scatter(
     x=date_range,
@@ -965,16 +965,16 @@ fig2.add_trace(go.Scatter(
     name="Agriculture",
     ))
 
-errorbars(InTEM_total, "4. Land use, land-use change and forestry", color_4, None, "InTEM")
-fig2.add_trace(go.Scatter(
-    x=date_range,
-    y=InTEM_total["4. Land use, land-use change and forestry"],
-    mode='lines',
-    line=dict(color=color_4[0], dash="dot", width=5),
-    showlegend=False,
-    hovertemplate = 'InTEM LULUCF %{x|%Y}: %{y:.0f} Gt yr⁻¹<extra></extra>',
-    name="Land use, Land-use change and forestry",
-    ))
+#errorbars(InTEM_total, "4. Land use, land-use change and forestry", color_4, None, "InTEM")
+#fig2.add_trace(go.Scatter(
+#    x=date_range,
+#    y=InTEM_total["4. Land use, land-use change and forestry"],
+#    mode='lines',
+#    line=dict(color=color_4[0], dash="dot", width=5),
+#    showlegend=False,
+#    hovertemplate = 'InTEM LULUCF %{x|%Y}: %{y:.0f} Gt yr⁻¹<extra></extra>',
+#    name="Land use, Land-use change and forestry",
+#    ))
 
 errorbars(InTEM_total, "5.  Waste", color_5, None, "InTEM")
 fig2.add_trace(go.Scatter(
@@ -1081,7 +1081,7 @@ fig2.update_layout(
         x=0.99,
         traceorder="normal",
         orientation="h",
-        font_size=12),
+        font_size=15),
     margin=dict(l=55, r=10, t=10, b=40),
     # paper_bgcolor='rgba(0,0,0,0)',
     # plot_bgcolor='rgba(0,0,0,0)'
@@ -1091,7 +1091,7 @@ fig2.update_layout(
 
 fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='Lightgrey')
 
-fig2.layout.font.size=12
+fig2.layout.font.size=15
 fig2.layout.font.family="Arial"
 
 fig2.update_xaxes(range=[pd.Timestamp("2012-01-01"),

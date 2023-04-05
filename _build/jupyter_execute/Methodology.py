@@ -5,7 +5,18 @@
 # 
 # This section will discuss the methodology surrounding the 2012-2015 data. 
 # 
+# It is important to note that DARE_UK does not currently have the capabilities to record emission contributions from individual economic sectors, although we are currently working towards this. 
 # 
+# As such, the sectoral emissions presented here are estimated using emissions data published in the UK Greenhouse Gas Inventory. 
+# 
+# By analysing data published in the UK GHG Inventory, we are able to estimate the percentage of average yearly emissions emitted by each economic sector from each individual grid-cell. We have then applied these same percentages from each grid-cell to the data published by the DARE_UK network between 2012-2022, as shown below.  
+# 
+# These sectors are then further categorised into 4 major economic sectors as such:
+#     
+# * Energy and Transport = Domestic combustion (domcom), Energy Production (energyprod), Offshore (offshore), Road Transport (roadtrans) and Other Transport (othertrans)
+# * Industiral Processes = Industrial combustion (indcom) and Industrial Production (indprod)
+# * Agriculture = Agriculture (agric)
+# * Waste = Waste  (waste)
 
 # In[1]:
 
@@ -19,6 +30,7 @@ import numpy as np
 import glob
 import xarray as xr
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 from numpy import loadtxt
 
 import cartopy
@@ -235,19 +247,13 @@ def plot_sector(year):
 # In[11]:
 
 
-plot_sector("2013")
-
-
-# In[12]:
-
-
 def plot_sector_perc(year):
     
-    fig, axs = plt.subplots(4, 3, figsize = (13, 13), subplot_kw={'projection':cartopy.crs.PlateCarree()})
+    fig, axs = plt.subplots(5, 2, figsize = (13, 13), subplot_kw={'projection':cartopy.crs.PlateCarree()})
     
     species = ["total", "agric", "domcom", "energyprod", "indcom", "indproc", "offshore", "othertrans", "roadtrans", "waste"]
     
-    fontsizes = {"title":10, "labels": 10, "axis":10}
+    fontsizes = {"title":10, "labels": 10, "axis":10, "suptitle":16} 
     
     for name, ax in zip(species, axs.flatten()):
         
@@ -294,58 +300,19 @@ def plot_sector_perc(year):
         ax.tick_params(axis='both', which='major', labelsize=fontsizes["axis"]) 
     
         ax.set_title(year +"\n"+ name, fontsize = fontsizes["title"])
-        fig.colorbar(a, ax=ax, pad=0.05, shrink=0.7)
+        fig.colorbar(a, ax=ax, pad=0.01, shrink=0.9)
         ax.set_ylabel("Latitude (degrees)", fontsize = fontsizes["labels"])
         ax.set_xlabel("Longitude (degrees)", fontsize = fontsizes["labels"])
+    
+    fig.suptitle("Percentage of Total Methane Emissions (CH\u2084) by Sector (2013)", fontsize=fontsizes["suptitle"], ha="center")
+    
+    #fig.subplots_adjust(hspace=0.5, wspace=0.5)
         
     fig.tight_layout()
 
 
-# In[13]:
+# In[12]:
 
 
 plot_sector_perc("2013")
-
-
-# ---
-# 
-# ## Download Link
-# 
-# {download}`Download the *HFC.csv* file <data/UK_NIR_2022_HFC-125.csv>`
-# 
-# 
-# {download}`Download *.nc* file <data/flux_data.nc>`
-# 
-# 
-# {download}`Download *.xlsx* file <data/GBR_2022_2020_10052022_142545.xlsx>`
-
-# In[14]:
-
-
-```{admonition} An extra exercise
-:class: extra-credit
-<plot_sector_perc("2014")>
-```
-
-
-# :::{figure-md} markdown-fig
-# <plot_sector_perc("2014")>
-# 
-# This is a caption in **Markdown**!
-# :::
-
-# <p class='extra-credit' markdown='1'>
-# **Another paragraph** which allows *Markdown* within it.
-# </p>
-
-# <code class="extra-credit">
-#   code_line(1);
-#   // a code comment
-#   class More Code { }
-# </code>
-
-# In[ ]:
-
-
-
 

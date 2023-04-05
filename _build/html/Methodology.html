@@ -26,8 +26,8 @@
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css" />
     <link rel="stylesheet" type="text/css" href="_static/mystnb.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css" />
-    <link rel="stylesheet" type="text/css" href="_static/justify.css" />
-    <link rel="stylesheet" type="text/css" href="_static/.ipynb_checkpoints/justify-checkpoint.css" />
+    <link rel="stylesheet" type="text/css" href="_static/dynamic_css.css" />
+    <link rel="stylesheet" type="text/css" href="_static/.ipynb_checkpoints/dynamic_css-checkpoint.css" />
     <link rel="stylesheet" type="text/css" href="_static/design-style.b7bb847fb20b106c3d81b95245e65545.min.css" />
     
   <!-- Pre-loaded scripts that we'll load fully later -->
@@ -335,40 +335,22 @@ title="Print to PDF"
   <section class="tex2jax_ignore mathjax_ignore" id="methodology">
 <h1>Methodology<a class="headerlink" href="#methodology" title="Permalink to this heading">#</a></h1>
 <p>This section will discuss the methodology surrounding the 2012-2015 data.</p>
+<p>It is important to note that DARE_UK does not currently have the capabilities to record emission contributions from individual economic sectors, although we are currently working towards this.</p>
+<p>As such, the sectoral emissions presented here are estimated using emissions data published in the UK Greenhouse Gas Inventory.</p>
+<p>By analysing data published in the UK GHG Inventory, we are able to estimate the percentage of average yearly emissions emitted by each economic sector from each individual grid-cell. We have then applied these same percentages from each grid-cell to the data published by the DARE_UK network between 2012-2022, as shown below.</p>
+<p>These sectors are then further categorised into 4 major economic sectors as such:</p>
+<ul class="simple">
+<li><p>Energy and Transport = Domestic combustion (domcom), Energy Production (energyprod), Offshore (offshore), Road Transport (roadtrans) and Other Transport (othertrans)</p></li>
+<li><p>Industiral Processes = Industrial combustion (indcom) and Industrial Production (indprod)</p></li>
+<li><p>Agriculture = Agriculture (agric)</p></li>
+<li><p>Waste = Waste  (waste)</p></li>
+</ul>
 <div class="cell tag_remove-input docutils container">
 <div class="cell_output docutils container">
-<img alt="_images/Methodology_13_0.png" src="_images/Methodology_13_0.png" />
+<img alt="_images/Methodology_12_0.png" src="_images/Methodology_12_0.png" />
 </div>
 </div>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>```{admonition} An extra exercise
-:class: extra-credit
-&lt;plot_sector_perc(&quot;2014&quot;)&gt;
-```
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span>  Input In [14]
-    ```{admonition} An extra exercise
-    ^
-SyntaxError: invalid syntax
-</pre></div>
-</div>
-</div>
-</div>
-<p>:::{figure-md} markdown-fig
-&lt;plot_sector_perc(“2014”)&gt;</p>
-<p>This is a caption in <strong>Markdown</strong>!
-:::</p>
-<p class='extra-credit' markdown='1'>
-**Another paragraph** which allows *Markdown* within it.
-</p><code class="extra-credit">
-  code_line(1);
-  // a code comment
-  class More Code { }
-</code></section>
+</section>
 
     <script type="text/x-thebe-config">
     {

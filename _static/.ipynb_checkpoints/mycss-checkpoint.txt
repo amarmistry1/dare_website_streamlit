@@ -1,0 +1,49 @@
+.output.text_html {
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+.cell.tag_remove-input.docutils.container {
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+.cell_output.docutils.container {
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+.plotly-graph-div {
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+#28fea8cf-37b0-4c8c-b465-58b30662a409 {
+    background-color: #74992e;
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+#main-content {
+    text-align: justify;
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+.container { 
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+#annual-emissions-broken-down-by-sector {
+    width: calc(100px + (1000 - 100) * ((100vw - 500px) / (1920 - 500)));
+}
+
+#6eeeb79f-f78e-4142-9d84-caf72679789b {
+    height: auto;
+    width: fit-content;
+    background-color: #74992e;
+    display: inline-block;
+}
+
+.plotly-graph-div {
+    height: auto;
+    max-width: 300px;
+    background-color: #74992e;
+    display: inline-block;
+}
+
+background-color: #74992e;
