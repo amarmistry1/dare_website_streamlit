@@ -1,32 +1,46 @@
-div.cell {
-    border: 1px solid transparent;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-box-align: stretch;
-    display: -moz-box;
-    -moz-box-align: stretch;
-    display: box;
-    box-orient: vertical;
-    box-align: stretch;
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    flex-direction: column;
-    -webkit-align-items: stretch;
-    -ms-flex-align: stretch;
-    align-items: stretch;
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    border-width: thin;
-    border-style: solid;
-    width: 100%;
-    padding: 5px;
-    padding-left: 0;
-    margin: 0;
-    outline: none;
+html,
+body {
+  height: 100vh;
+  min-height: 100vh;
+  max-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex-grow: 1;
+  background: #CCC;
+}
+
+.p {
+  text-align: center;
+  font-size: 14px;
+  padding-top: 140px;
+}
+
+.fixed {
+  background: black;
+  height: 100px;
+  min-height: 100px;
+  color: white;
+  text-align: center;
+}
+
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.plotly-graph-div {
+    height: auto;
+    max-width: 300px;
+    background-color: #74992e;
+    display: inline-block;
+    resize: vertical;
 }
