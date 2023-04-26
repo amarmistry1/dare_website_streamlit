@@ -15,4 +15,3 @@ pyshp
 geopandas
 eccodes
 scipy
-glob
