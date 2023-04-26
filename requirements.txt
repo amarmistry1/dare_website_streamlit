@@ -15,6 +15,5 @@ pyshp
 geopandas
 eccodes
 scipy
-pyproj
 itertools
 glob
