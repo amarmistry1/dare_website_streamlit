@@ -6,5 +6,4 @@ pandas
 plotly
 xarray
 matplotlib
-cartopy
 ipywidgets
