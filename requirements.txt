@@ -7,4 +7,7 @@ plotly
 xarray
 matplotlib
 ipywidgets
+geos
+pyshp
+shapely
 cartopy
