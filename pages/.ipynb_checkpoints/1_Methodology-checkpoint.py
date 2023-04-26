@@ -273,7 +273,7 @@ These sectors are then further categorised into 4 major economic sectors as such
 ''')
 
     
-st.pyplot(fig, use_container_width=True)
+st.pyplot(fig)
 
 
 # In[49]:

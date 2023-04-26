@@ -20,6 +20,10 @@ import numpy as np
 import glob
 import plotly
 
+import streamlit_extras
+
+from streamlit_extras.app_logo import add_logo
+
 from fig_mods.getdata import load_ch4
 from fig_mods.getdata import load_n2o
 from fig_mods.getdata import load_fgas
@@ -1154,28 +1158,27 @@ ODS_InTEM = convert_df(dfODS)
 
 dfs = [InTEM_total, ch4_InTEM, n2o_InTEM, ODS_InTEM]
 
+dfs_labels = {InTEM_total: "InTEM Methane and Nitrous Oxide", ch4_InTEM: "InTEM Methane data", n2o_InTEM: "InTEM Nitrous Oxide data", ODS_InTEM: "InTEM fgas ODS data"}
+
 st.header("Download Data")
 
-st.download_button("Click here to download the InTEM Methane and Nitrous Oxide data", 
-                   data=InTEM_total, 
-                   file_name="InTEM_total.csv")
-st.download_button("Click here to download the InTEM Methane (CH4) data", data=ch4_InTEM, file_name="ch4_InTEM.csv")
-st.download_button("Click here to download the InTEM Nitrous Oxide (N2O) data", data=n2o_InTEM, file_name="n2o_InTEM.csv")
-st.download_button("Click here to download the InTEM fgas ODS data", data=ODS_InTEM, file_name="ODS_InTEM.csv")
+dfs1 = st.selectbox(label = "Choose a dataset", options = dfs, format_func=lambda x: dfs_labels.get(x))
 
+st.download_button("Click here to download the data", 
+                   data=dfs1,
+                  file_name = "InTEM_data.csv")
 
-# Download Data
- 
-#{download}`Click here to download the InTEM Methane and Nitrous Oxide data <InTEM_total.xlsx>`
- 
-#{download}`Click here to download the InTEM Methane (CH4) data <ch4_InTEM.xlsx>`
- 
-#{download}`Click here to download the InTEM Nitrous Oxide (N2O) data <n2o_InTEM.xlsx>`
-  
-#{download}`Click here to download the InTEM fgas ODS data <ODS_InTEM.xlsx>`
-#''')
+#st.download_button("Click here to download the InTEM Methane and Nitrous Oxide data", 
+#                   data=InTEM_total, 
+#                   file_name="InTEM_total.csv")
+#st.download_button("Click here to download the InTEM Methane (CH4) data", data=ch4_InTEM, file_name="ch4_InTEM.csv")
+#st.download_button("Click here to download the InTEM Nitrous Oxide (N2O) data", data=n2o_InTEM, file_name="n2o_InTEM.csv")
+#st.download_button("Click here to download the InTEM fgas ODS data", data=ODS_InTEM, file_name="ODS_InTEM.csv")
+
 
 st.sidebar.title("ACRG Emissions by Sector")
 
 st.sidebar.image("uob_logo.png", use_column_width=True)
+
+#add_logo("uob_logo.png", height=300)
 
