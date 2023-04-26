@@ -20,8 +20,6 @@ import numpy as np
 import glob
 import plotly
 
-from streamlit_extras.app_logo import add_logo
-
 from fig_mods.getdata import load_ch4
 from fig_mods.getdata import load_n2o
 from fig_mods.getdata import load_fgas
