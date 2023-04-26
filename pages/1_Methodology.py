@@ -281,3 +281,6 @@ st.pyplot(fig, use_container_width=True)
 
 #plot_sector_perc("2013")
 
+st.sidebar.title("ACRG Emissions by Sector")
+
+st.sidebar.image("uob_logo.png", use_column_width=True)
