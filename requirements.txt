@@ -4,10 +4,11 @@ numpy
 streamlit
 pandas
 plotly
-xarray
 matplotlib
 ipywidgets
 geos
 pyshp
-shapely
-cartopy
+xarray --no-binary=xarray
+netcdf4 --no-binary=netcdf4
+shapely --no-binary=shapely
+cartopy --no-binary=cartopy
