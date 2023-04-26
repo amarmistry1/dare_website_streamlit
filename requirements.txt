@@ -4,3 +4,7 @@ numpy
 streamlit
 pandas
 plotly
+xarray
+matplotlib
+cartopy
+ipywidgets
