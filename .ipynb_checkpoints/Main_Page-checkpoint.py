@@ -1176,5 +1176,19 @@ st.sidebar.title("ACRG Emissions by Sector")
 
 st.sidebar.image("uob_logo.png", use_column_width=True)
 
+st.sidebar.markdown('''
+
+
+
+''')
+
+
+with open("Website_pdf.pdf", "rb") as pdf_file:
+    PDFbyte = pdf_file.read()
+
+st.sidebar.download_button(label="Print page as pdf",
+                    data=PDFbyte,
+                    file_name="test.pdf")
+
 #add_logo("uob_logo.png", height=300)
 
