@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# Annual emissions broken down by sector.'
+####################################################IMPORTANT###########################################################################################################################################################################################
+# To update website with new data, first replace all existing data in the 'data' folder with the updated data. 
+# Then add new years to 'years' and 'test_dict' dictionaries.
 # 
-## Here we can present the visualisations and discuss them.'
-# 
-## This page can be easily printed to a pdf using the buttons on the top right hand side of this web page.'
-# 
-## This page is just a markdown file that has been slightly adapted to look nicer in Jupyter Books - e.g. removing the cell inputs/ outputs to only show the interactive graph below.'
+# The UK gov Inventory data will need replacing, and the 'read_invent' function may need updating if the new dataset is renamed in a different format. Same applies to the rest of the inventory data and the InTEM flux data from the MetOffice.
+#
+# The ukghg data will not require any further chances to the code - simply adding another sector data for the new year to the 'data' folder in this repo and updating the dictionaries stated above should update the graphs
+########################################################################################################################################################################################################################################################
 
 # In[1]:
 
@@ -44,15 +45,18 @@ import ipywidgets as widgets
 
 
 # In[2]:
-
-
+#############################################
+# Methane and N2O dataframes from the UK gov Inventory dataset
+#############################################
 dfCH4 = (read_invent("GBR", "2022", "Table10s3"))
 dfN2O = (read_invent("GBR", "2022", "Table10s4"))
 
 
 # In[3]:
 
-
+#############################################
+# fgas data from the UK gov Inventory dataset
+#############################################
 invent_fgas_total = pd.read_csv('data/UK_NIR_2022_co2e_all_gases_yearly.csv', index_col="year")
 invent_fgas_total.index = pd.to_datetime(invent_fgas_total.index, format='%Y')
 
@@ -68,11 +72,12 @@ for name in (fgases):
 dfODS["ODS"] = dfODS.sum(axis=1) / 1000
 dfODS["Total"] = invent_fgas_total.sum(axis=1) / 1000
 
-#dfODS
-
 
 # In[4]:
 
+#############################################
+# Methane and N2O data from InTEM
+#############################################
 
 def read_intem(species):
 
@@ -112,6 +117,9 @@ df_n2o, _, _, _ = read_intem("n2o")
 
 # In[6]:
 
+#############################################
+# fgas data from InTEM
+#############################################
 
 # Get F-gases
 fgas = [f"hfc{hfc}" for hfc in ["23", "32", "125", "134a", "143a", "152a", "227ea", "245fa", "365mfc", "4310mee"]] +     [f"pfc{pfc}" for pfc in ["14", "116", "218", "318"]] +     ["sf6"]
@@ -136,6 +144,10 @@ df_fgas["InTEM_ODS_std"] = (dfODS["ODS"] / dfODS["Total"]) * df_fgas["InTEM_std"
 
 
 # In[8]:
+
+#############################################
+# Code for figure 1
+#############################################
 
 
 alpha = 0.6
@@ -421,6 +433,9 @@ fig.add_annotation(
 
 # In[9]:
 
+#############################################
+# Methane flux data (InTEM) 
+#############################################
 
 ds_flux = xr.open_dataset("data/flux_MetOffice-InTEM_ch4_MHD_TAC_RGL_TTA_BSD_HFD_CBW_WAO_JFJ_CMN_ZEP_TRN_LUT_2012-2021_Dec2022.nc")
 
@@ -446,8 +461,9 @@ area = areagrid(lat, lon)
 
 # In[11]:
 
-
+#############################################
 ## Create a function to produce a mean flux reading for each year;
+#############################################
 
 def weighted_temporal_mean(ds, var):
 
@@ -480,9 +496,6 @@ def weighted_temporal_mean(ds, var):
 
 Intem_new_year = weighted_temporal_mean(ds_flux, "flux_prior")
 Intem2012 = Intem_new_year[dict(time=0)] * area
-Intem2013 = Intem_new_year[dict(time=1)] * area
-Intem2014 = Intem_new_year[dict(time=2)] * area
-Intem2015 = Intem_new_year[dict(time=3)] * area
 
 
 # In[13]:
@@ -500,6 +513,9 @@ def intem_by_year(year):
 
 # In[14]:
 
+#############################################
+# Methane flux data (ukghg)
+#############################################
 
 def read_invent_ch4(year, species):
     import pandas as pd
@@ -530,8 +546,16 @@ def read_invent_ch4(year, species):
 
 # In[15]:
 
+#############################################
+# Group ukghg sectors into Energy, Industrial processes, Agriculture and Waste.
+# For each grid cell, calculate the proportion of total methane emissions estimated by InTEM originating from each sector based on the proportions presented by the ukghg data. 
+# 
+# i.e. first divide Agricultural emissions by the Total emissions of a grid cell (using ukghg data) to calculate the proportion of emissions coming from this sector. Then apply this same fraction to the InTEM data for each grid cell and each year. 
+#############################################
 
-#!!!UNDER MAINTENANCE - REMEMBER TO CONVERT TO MARKDOWN BEFORE LOGGING OFF!!!
+##################################IMPORTANT##################################
+# To update graph with new data, add new years to 'test_dict' and 'years' dictionary
+#############################################################################
 
 years = ["2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
 
@@ -658,6 +682,10 @@ spatial_ch4_total["1. Energy"] = spatial_ch4_total["1. Energy"] / 10
 
 # In[19]:
 
+#############################################
+# Add these new values for each sector to the existing main dataframes for each species. This is done to make it easier to plot the final figure.
+#############################################
+
 
 species = ["1. Energy", "2.  Industrial processes", "3.  Agriculture", "4. Land use, land-use change and forestry", "5.  Waste"]
 ch4_fract = pd.DataFrame(df_ch4)
@@ -690,9 +718,8 @@ for name in species:
 
 
 ch4_gt_all = ch4_gt
-year = ["2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020"]
 
-for date in year:
+for date in years:
     ch4_gt_all.loc[date, "1. Energy"] = spatial_ch4_total.loc[date, "1. Energy"]
     ch4_gt_all.loc[date, "2.  Industrial processes"] = spatial_ch4_total.loc[date, "2.  Industrial processes"]
     ch4_gt_all.loc[date, "3.  Agriculture"] = spatial_ch4_total.loc[date, "3.  Agriculture"]
@@ -753,6 +780,9 @@ for name in species:
 
 # In[25]:
 
+#############################################
+# Combine the methane and n2o datasets
+#############################################
 
 InTEM_total = ch4_gt_all + n2o_gt
 #InTEM_total = InTEM_total.drop(index=(["2012", "2013", "2014", "2015"]))
@@ -764,21 +794,14 @@ InTEM_total = InTEM_total.reindex(ch4_gt.index)
 #InTEM_total
 
 
-# In[26]:
-
-
-ALL = 'ALL'
-def unique_sorted_values_plus_ALL(array):
-    unique = array.unique().tolist()
-    unique.sort()
-    unique.insert(0, ALL)
-    return unique
-
-
 # In[27]:
 
 
 # In[28]:
+
+#############################################
+# Remove all data pre-2012 to show the most recent data
+#############################################
 
 
 ## zoomed in version
@@ -804,11 +827,11 @@ dfODS = dfODS.drop(["1990", "1991", "1992", "1993", "1994", "1995", "1996", "199
                   "2010", "2011"])
 
 
-# # Annual emissions broken down by sector (2012-2021)
-# 
-# Here we can show the most recent data broken down by sector 
-
 # In[30]:
+
+#############################################
+# Plot figure 2
+#############################################
 
 
 fig2 = go.Figure()
@@ -1124,7 +1147,9 @@ fig2.add_layout_image(
 #dfODS.to_excel("ODS_InTEM.xlsx")
 
 
-# 
+#############################################
+# Here are customisations for the website - visit streamlit.com for more info/ documentation
+#############################################
 
 
 st.title("Annual emissions broken down by sector")
