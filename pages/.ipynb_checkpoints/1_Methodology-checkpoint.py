@@ -267,7 +267,7 @@ By analysing data published in the UK GHG Inventory, we are able to estimate the
 These sectors are then further categorised into 4 major economic sectors as such:
      
 * Energy and Transport = Domestic combustion (domcom), Energy Production (energyprod), Offshore (offshore), Road Transport (roadtrans) and Other Transport (othertrans)
-* Industiral Processes = Industrial combustion (indcom) and Industrial Production (indprod)
+* Industiral Processes = Industrial Combustion (indcom) and Industrial Processes (indproc)
 * Agriculture = Agriculture (agric)
 * Waste = Waste  (waste)
 ''')

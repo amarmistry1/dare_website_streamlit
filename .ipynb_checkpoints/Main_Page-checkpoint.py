@@ -1213,7 +1213,7 @@ with open("Website_pdf.pdf", "rb") as pdf_file:
 
 st.sidebar.download_button(label="Print page as pdf",
                     data=PDFbyte,
-                    file_name="test.pdf")
+                    file_name="website.pdf")
 
 #add_logo("uob_logo.png", height=300)
 
